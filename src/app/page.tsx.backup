@@ -1,0 +1,195 @@
+import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
+import Link from "next/link";
+import styles from "./page.module.css";
+
+export default function HomePage() {
+  return (
+    <div className={styles.container}>
+      {/* Navigation */}
+      <nav className={styles.nav}>
+        <div className={styles.logo}>
+          ✨ GetShortzy
+        </div>
+        <div className={styles.navLinks}>
+          <a href="#features" className={styles.navLink}>Features</a>
+          <a href="#pricing" className={styles.navLink}>Pricing</a>
+          <a href="#faq" className={styles.navLink}>FAQ</a>
+        </div>
+        <div>
+          <SignedOut>
+            <SignInButton mode="modal">
+              <button className={styles.signInBtn}>Sign In</button>
+            </SignInButton>
+          </SignedOut>
+          <SignedIn>
+            <Link href="/dashboard">
+              <button className={styles.signInBtn}>Dashboard</button>
+            </Link>
+          </SignedIn>
+        </div>
+      </nav>
+
+      {/* Hero Section */}
+      <section className={styles.hero}>
+        <div className={styles.badge}>
+          ⚡ AI-Powered Video Automation
+        </div>
+        
+        <h1 className={styles.heroTitle}>
+          Turn Long Videos Into<br />Viral Shorts
+        </h1>
+        
+        <p className={styles.heroSubtitle}>
+          AI-powered platform that analyzes your videos and automatically generates 
+          high-performing short-form content for TikTok, YouTube Shorts, and Instagram Reels. 
+          No editing skills required.
+        </p>
+
+        <div className={styles.ctaButtons}>
+          <SignedOut>
+            <SignInButton mode="modal">
+              <button className={styles.primaryBtn}>
+                Start Creating Free →
+              </button>
+            </SignInButton>
+          </SignedOut>
+          <SignedIn>
+            <Link href="/dashboard">
+              <button className={styles.primaryBtn}>
+                Go to Dashboard →
+              </button>
+            </Link>
+          </SignedIn>
+          <button className={styles.secondaryBtn}>
+            ▶ Watch Demo
+          </button>
+        </div>
+
+        <div className={styles.features}>
+          <div className={styles.feature}>
+            ✓ No credit card required
+          </div>
+          <div className={styles.feature}>
+            ✓ 3 free credits
+          </div>
+          <div className={styles.feature}>
+            ✓ Cancel anytime
+          </div>
+        </div>
+
+        <div className={styles.stats}>
+          <div className={styles.stat}>
+            <div className={styles.statNumber}>10M+</div>
+            <div className={styles.statLabel}>Clips Generated</div>
+          </div>
+          <div className={styles.stat}>
+            <div className={styles.statNumber}>50K+</div>
+            <div className={styles.statLabel}>Happy Creators</div>
+          </div>
+          <div className={styles.stat}>
+            <div className={styles.statNumber}>1B+</div>
+            <div className={styles.statLabel}>Total Views Generated</div>
+          </div>
+        </div>
+      </section>
+
+      {/* Features Section */}
+      <section className={styles.section} id="features">
+        <h2 className={styles.sectionTitle}>Everything You Need to Go Viral</h2>
+        
+        <div className={styles.featureGrid}>
+          <div className={styles.featureCard}>
+            <div className={styles.featureIcon}>🧠</div>
+            <h3 className={styles.featureTitle}>AI-Powered Analysis</h3>
+            <p className={styles.featureDescription}>
+              GPT-4o and Claude analyze your videos to identify the most engaging moments, 
+              hooks, and viral-worthy content automatically.
+            </p>
+          </div>
+
+          <div className={styles.featureCard}>
+            <div className={styles.featureIcon}>✂️</div>
+            <h3 className={styles.featureTitle}>Smart Auto-Editing</h3>
+            <p className={styles.featureDescription}>
+              Automatically cuts, crops, and optimizes your videos for each platform's 
+              specifications and best practices.
+            </p>
+          </div>
+
+          <div className={styles.featureCard}>
+            <div className={styles.featureIcon}>⚡</div>
+            <h3 className={styles.featureTitle}>Lightning Fast Processing</h3>
+            <p className={styles.featureDescription}>
+              Process hours of content in minutes. Our advanced infrastructure handles 
+              videos of any length with blazing speed.
+            </p>
+          </div>
+
+          <div className={styles.featureCard}>
+            <div className={styles.featureIcon}>🎯</div>
+            <h3 className={styles.featureTitle}>Multi-Platform Export</h3>
+            <p className={styles.featureDescription}>
+              Generate perfectly formatted clips for TikTok, YouTube Shorts, Instagram Reels, 
+              and more - all from a single upload.
+            </p>
+          </div>
+
+          <div className={styles.featureCard}>
+            <div className={styles.featureIcon}>📊</div>
+            <h3 className={styles.featureTitle}>Analytics & Insights</h3>
+            <p className={styles.featureDescription}>
+              Track performance metrics and get AI-powered recommendations to improve 
+              your content strategy.
+            </p>
+          </div>
+
+          <div className={styles.featureCard}>
+            <div className={styles.featureIcon}>🔄</div>
+            <h3 className={styles.featureTitle}>Batch Processing</h3>
+            <p className={styles.featureDescription}>
+              Upload multiple videos and let our AI process them all simultaneously. 
+              Perfect for content creators with large libraries.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className={styles.section} style={{textAlign: 'center'}}>
+        <h2 className={styles.sectionTitle}>Ready to Go Viral?</h2>
+        <p className={styles.heroSubtitle}>
+          Join thousands of creators who are already using GetShortzy to grow their audience.
+        </p>
+        <div style={{display: 'flex', justifyContent: 'center', marginTop: '2rem'}}>
+          <SignedOut>
+            <SignInButton mode="modal">
+              <button className={styles.primaryBtn}>
+                Start Creating Free →
+              </button>
+            </SignInButton>
+          </SignedOut>
+          <SignedIn>
+            <Link href="/dashboard">
+              <button className={styles.primaryBtn}>
+                Go to Dashboard →
+              </button>
+            </Link>
+          </SignedIn>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer style={{
+        textAlign: 'center',
+        padding: '3rem 2rem',
+        borderTop: '1px solid rgba(255, 255, 255, 0.2)',
+        marginTop: '4rem'
+      }}>
+        <p style={{opacity: 0.8}}>
+          © 2025 GetShortzy. All rights reserved.
+        </p>
+      </footer>
+    </div>
+  );
+}
+

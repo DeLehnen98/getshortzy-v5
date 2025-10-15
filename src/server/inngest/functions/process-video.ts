@@ -57,8 +57,8 @@ export const processVideo = inngest.createFunction(
             duration: clip.duration,
             viralScore: clip.viralScore,
             status: "ready",
-            platform: platform,
             metadata: {
+              platform: platform,
               startTime: clip.startTime,
               endTime: clip.endTime,
               tags: clip.tags,

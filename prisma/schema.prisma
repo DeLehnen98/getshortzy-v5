@@ -32,15 +32,24 @@ model Project {
   description String?
   sourceType  String   // "upload" | "youtube"
   sourceUrl   String?
+  fileUrl     String?  // Uploaded file URL
+  audioUrl    String?  // Extracted audio URL
+  duration    Int?     // Video duration in seconds
   status      String   @default("pending") // "pending" | "processing" | "completed" | "failed"
   preset      String   // "viral" | "balanced" | "volume"
   platform    String   // "tiktok" | "youtube" | "instagram" | "all"
+  transcriptionStatus String? @default("pending") // "pending" | "processing" | "completed" | "failed"
+  transcribedAt DateTime?
+  analyzedAt  DateTime? // When viral moments were analyzed
+  metadata    Json?    // Additional project metadata
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
   user  User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   clips Clip[]
   jobs  Job[]
+  transcription Transcription?
+  viralMoments  ViralMoment[]
 
   @@index([userId])
   @@index([status])
@@ -56,6 +65,10 @@ model Clip {
   duration    Int      // in seconds
   viralScore  Int      @default(0) // 0-100
   status      String   @default("pending") // "pending" | "processing" | "ready" | "failed"
+  startTime   Int?     // Start time in source video (seconds)
+  endTime     Int?     // End time in source video (seconds)
+  fileSize    Int?     // File size in bytes
+  processedAt DateTime? // When clip was successfully generated
   metadata    Json?    // Additional metadata
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -99,6 +112,40 @@ model Transaction {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
+  @@index([type])
+}
+
+model Transcription {
+  id          String   @id @default(cuid())
+  projectId   String   @unique
+  text        String   @db.Text
+  language    String?
+  segments    Json?    // WhisperX segments with timestamps
+  speakers    Json?    // Speaker diarization data
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([projectId])
+}
+
+model ViralMoment {
+  id          String   @id @default(cuid())
+  projectId   String
+  startTime   Int      // in seconds
+  endTime     Int      // in seconds
+  score       Int      // 0-100 viral score
+  type        String   // "story" | "question" | "hook" | "punchline" | "insight"
+  description String?
+  transcript  String?  @db.Text
+  metadata    Json?    // Additional AI analysis data
+  createdAt   DateTime @default(now())
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([projectId])
+  @@index([score])
   @@index([type])
 }
 

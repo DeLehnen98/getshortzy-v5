@@ -1,9 +1,10 @@
 import { serve } from "inngest/next";
-import { inngest } from "~/server/inngest/client";
+import { inngest } from "@/lib/inngest";
 import { processVideo } from "~/server/inngest/functions/process-video";
+import { transcribeVideo } from "@/inngest/transcribe";
 
 export const { GET, POST, PUT } = serve({
   client: inngest,
-  functions: [processVideo],
+  functions: [processVideo, transcribeVideo],
 });
 

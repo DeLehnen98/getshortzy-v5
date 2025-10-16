@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import { UserButton } from "@clerk/nextjs";
 import Link from "next/link";
@@ -23,12 +23,20 @@ import {
 } from "lucide-react";
 import { api } from "~/lib/trpc/client";
 import { useState } from "react";
+import UploadModal from "@/components/UploadModal";
+import { useRouter } from "next/navigation";
 
 export default function DashboardPage() {
+  const router = useRouter();
   const { data: stats } = api.user.getStats.useQuery();
   const { data: projects } = api.project.list.useQuery();
   const [showUploadDialog, setShowUploadDialog] = useState(false);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+
+  const handleUploadComplete = (projectId: string) => {
+    setShowUploadDialog(false);
+    router.push(`/dashboard/projects/${projectId}`);
+  };
 
   return (
     <div className="min-h-screen bg-gray-950">
@@ -235,10 +243,12 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* Upload Dialog */}
-      {showUploadDialog && (
-        <UploadDialog onClose={() => setShowUploadDialog(false)} />
-      )}
+      {/* Upload Modal */}
+      <UploadModal
+        isOpen={showUploadDialog}
+        onClose={() => setShowUploadDialog(false)}
+        onUploadComplete={handleUploadComplete}
+      />
     </div>
   );
 }
@@ -456,248 +466,6 @@ function EmptyState({ onCreateClick }: { onCreateClick: () => void }) {
         <Plus className="h-4 w-4" />
         Create Your First Project
       </button>
-    </div>
-  );
-}
-
-function UploadDialog({ onClose }: { onClose: () => void }) {
-  const [step, setStep] = useState(1);
-  const [formData, setFormData] = useState({
-    name: "",
-    sourceType: "youtube" as "youtube" | "upload",
-    sourceUrl: "",
-    preset: "viral" as "viral" | "balanced" | "volume",
-    platform: "all" as "tiktok" | "youtube" | "instagram" | "all",
-  });
-
-  const createProject = api.project.create.useMutation({
-    onSuccess: () => {
-      onClose();
-      window.location.reload();
-    },
-  });
-
-  const handleSubmit = () => {
-    createProject.mutate(formData);
-  };
-
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm">
-      <div className="w-full max-w-2xl rounded-xl border border-gray-800 bg-gray-900 p-8 shadow-2xl">
-        <div className="mb-6 flex items-center justify-between">
-          <div>
-            <h2 className="text-2xl font-bold text-white">Create Project</h2>
-            <p className="text-sm text-gray-400 mt-1">
-              Step {step} of 2 - {step === 1 ? "Video Source" : "Settings"}
-            </p>
-          </div>
-          <button
-            onClick={onClose}
-            className="text-gray-400 hover:text-white transition-colors"
-          >
-            <span className="text-2xl">✕</span>
-          </button>
-        </div>
-
-        {/* Progress Bar */}
-        <div className="mb-8 h-2 bg-gray-800 rounded-full overflow-hidden">
-          <div
-            className="h-full bg-gradient-to-r from-purple-600 to-pink-600 transition-all duration-300"
-            style={{ width: `${(step / 2) * 100}%` }}
-          />
-        </div>
-
-        {step === 1 && (
-          <div className="space-y-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
-                Project Name
-              </label>
-              <input
-                type="text"
-                value={formData.name}
-                onChange={(e) =>
-                  setFormData({ ...formData, name: e.target.value })
-                }
-                className="w-full rounded-lg border border-gray-700 bg-gray-800 px-4 py-3 text-white placeholder-gray-500 focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500/20"
-                placeholder="My Awesome Video"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-3">
-                Video Source
-              </label>
-              <div className="grid grid-cols-2 gap-4">
-                <button
-                  onClick={() =>
-                    setFormData({ ...formData, sourceType: "youtube" })
-                  }
-                  className={`group relative overflow-hidden rounded-lg border p-6 transition-all ${
-                    formData.sourceType === "youtube"
-                      ? "border-purple-500 bg-purple-500/20 shadow-lg shadow-purple-500/20"
-                      : "border-gray-700 bg-gray-800 hover:border-gray-600"
-                  }`}
-                >
-                  <Youtube className="h-8 w-8 text-red-500 mb-3" />
-                  <p className="font-medium text-white mb-1">YouTube URL</p>
-                  <p className="text-xs text-gray-400">
-                    Import from YouTube
-                  </p>
-                </button>
-                <button
-                  onClick={() =>
-                    setFormData({ ...formData, sourceType: "upload" })
-                  }
-                  className={`group relative overflow-hidden rounded-lg border p-6 transition-all ${
-                    formData.sourceType === "upload"
-                      ? "border-purple-500 bg-purple-500/20 shadow-lg shadow-purple-500/20"
-                      : "border-gray-700 bg-gray-800 hover:border-gray-600"
-                  }`}
-                >
-                  <UploadIcon className="h-8 w-8 text-purple-500 mb-3" />
-                  <p className="font-medium text-white mb-1">Upload Video</p>
-                  <p className="text-xs text-gray-400">From your device</p>
-                </button>
-              </div>
-            </div>
-            {formData.sourceType === "youtube" && (
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
-                  YouTube URL
-                </label>
-                <div className="relative">
-                  <Link2 className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-500" />
-                  <input
-                    type="url"
-                    value={formData.sourceUrl}
-                    onChange={(e) =>
-                      setFormData({ ...formData, sourceUrl: e.target.value })
-                    }
-                    className="w-full rounded-lg border border-gray-700 bg-gray-800 pl-10 pr-4 py-3 text-white placeholder-gray-500 focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500/20"
-                    placeholder="https://youtube.com/watch?v=..."
-                  />
-                </div>
-              </div>
-            )}
-            <button
-              onClick={() => setStep(2)}
-              disabled={!formData.name || !formData.sourceUrl}
-              className="w-full rounded-lg bg-purple-600 px-4 py-3 font-medium text-white hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all hover:scale-[1.02]"
-            >
-              Continue to Settings
-            </button>
-          </div>
-        )}
-
-        {step === 2 && (
-          <div className="space-y-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-3">
-                Quality Preset
-              </label>
-              <div className="space-y-3">
-                {[
-                  {
-                    value: "viral",
-                    label: "🔥 Viral Guarantee",
-                    desc: "3-5 clips, 85+ viral score",
-                    recommended: true,
-                  },
-                  {
-                    value: "balanced",
-                    label: "⚖️ Balanced Quality",
-                    desc: "8-12 clips, 70+ viral score",
-                  },
-                  {
-                    value: "volume",
-                    label: "📊 Maximum Volume",
-                    desc: "15-25 clips, 60+ viral score",
-                  },
-                ].map((preset) => (
-                  <button
-                    key={preset.value}
-                    onClick={() =>
-                      setFormData({
-                        ...formData,
-                        preset: preset.value as any,
-                      })
-                    }
-                    className={`relative w-full rounded-lg border p-4 text-left transition-all ${
-                      formData.preset === preset.value
-                        ? "border-purple-500 bg-purple-500/20 shadow-lg shadow-purple-500/20"
-                        : "border-gray-700 bg-gray-800 hover:border-gray-600"
-                    }`}
-                  >
-                    {preset.recommended && (
-                      <span className="absolute -top-2 right-4 rounded-full bg-purple-600 px-2 py-0.5 text-xs font-semibold text-white">
-                        Recommended
-                      </span>
-                    )}
-                    <p className="font-medium text-white mb-1">
-                      {preset.label}
-                    </p>
-                    <p className="text-sm text-gray-400">{preset.desc}</p>
-                  </button>
-                ))}
-              </div>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-3">
-                Target Platform
-              </label>
-              <div className="grid grid-cols-2 gap-3">
-                {[
-                  { value: "tiktok", label: "TikTok", icon: "🎵" },
-                  { value: "youtube", label: "YouTube", icon: "📺" },
-                  { value: "instagram", label: "Instagram", icon: "📸" },
-                  { value: "all", label: "All Platforms", icon: "🌐" },
-                ].map((platform) => (
-                  <button
-                    key={platform.value}
-                    onClick={() =>
-                      setFormData({
-                        ...formData,
-                        platform: platform.value as any,
-                      })
-                    }
-                    className={`rounded-lg border p-3 transition-all ${
-                      formData.platform === platform.value
-                        ? "border-purple-500 bg-purple-500/20 shadow-lg shadow-purple-500/20"
-                        : "border-gray-700 bg-gray-800 hover:border-gray-600"
-                    }`}
-                  >
-                    <p className="font-medium text-white">
-                      {platform.icon} {platform.label}
-                    </p>
-                  </button>
-                ))}
-              </div>
-            </div>
-            <div className="flex gap-3">
-              <button
-                onClick={() => setStep(1)}
-                className="flex-1 rounded-lg border border-gray-700 px-4 py-3 font-medium text-white hover:bg-gray-800 transition-colors"
-              >
-                Back
-              </button>
-              <button
-                onClick={handleSubmit}
-                disabled={createProject.isPending}
-                className="flex-1 rounded-lg bg-purple-600 px-4 py-3 font-medium text-white hover:bg-purple-700 disabled:opacity-50 transition-all hover:scale-[1.02] shadow-lg shadow-purple-500/20"
-              >
-                {createProject.isPending ? (
-                  <span className="flex items-center justify-center gap-2">
-                    <Zap className="h-4 w-4 animate-pulse" />
-                    Creating...
-                  </span>
-                ) : (
-                  "Create Project"
-                )}
-              </button>
-            </div>
-          </div>
-        )}
-      </div>
     </div>
   );
 }

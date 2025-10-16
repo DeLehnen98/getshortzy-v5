@@ -142,5 +142,47 @@ export const projectRouter = createTRPCRouter({
 
       return { success: true };
     }),
+
+  startTranscription: protectedProcedure
+    .input(z.object({ projectId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const user = await ctx.db.user.findUnique({
+        where: { clerkId: ctx.userId },
+      });
+
+      if (!user) {
+        throw new Error("User not found");
+      }
+
+      // Get project
+      const project = await ctx.db.project.findFirst({
+        where: {
+          id: input.projectId,
+          userId: user.id,
+        },
+      });
+
+      if (!project) {
+        throw new Error("Project not found");
+      }
+
+      // Update status
+      await ctx.db.project.update({
+        where: { id: input.projectId },
+        data: {
+          transcriptionStatus: "processing",
+        },
+      });
+
+      // Trigger transcription workflow
+      await inngest.send({
+        name: "video/transcribe",
+        data: {
+          projectId: input.projectId,
+        },
+      });
+
+      return { success: true };
+    }),
 });
 

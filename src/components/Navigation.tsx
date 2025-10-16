@@ -67,21 +67,21 @@ export default function Navigation() {
             </button>
             {activeDropdown === 'solutions' && (
               <div className={styles.dropdown}>
-                <Link href="/use-cases/content-creators" className={styles.dropdownItem}>
+                <Link href="/solutions/creators" className={styles.dropdownItem}>
                   <span className={styles.dropdownIcon}>🎥</span>
                   <div>
                     <div className={styles.dropdownTitle}>Content Creators</div>
                     <div className={styles.dropdownDesc}>For YouTubers & Influencers</div>
                   </div>
                 </Link>
-                <Link href="/use-cases/marketers" className={styles.dropdownItem}>
+                <Link href="/solutions/marketers" className={styles.dropdownItem}>
                   <span className={styles.dropdownIcon}>📊</span>
                   <div>
                     <div className={styles.dropdownTitle}>Marketers</div>
                     <div className={styles.dropdownDesc}>Scale your content</div>
                   </div>
                 </Link>
-                <Link href="/use-cases/agencies" className={styles.dropdownItem}>
+                <Link href="/solutions/agencies" className={styles.dropdownItem}>
                   <span className={styles.dropdownIcon}>🏢</span>
                   <div>
                     <div className={styles.dropdownTitle}>Agencies</div>
@@ -110,7 +110,7 @@ export default function Navigation() {
                     <div className={styles.dropdownDesc}>Tips & insights</div>
                   </div>
                 </Link>
-                <Link href="/help" className={styles.dropdownItem}>
+                <Link href="/help-center" className={styles.dropdownItem}>
                   <span className={styles.dropdownIcon}>❓</span>
                   <div>
                     <div className={styles.dropdownTitle}>Help Center</div>
@@ -129,6 +129,45 @@ export default function Navigation() {
           </div>
 
           <Link href="/pricing" className={styles.navLink}>Pricing</Link>
+          
+          {/* Language Selector */}
+          <div 
+            className={styles.navItem}
+            onMouseEnter={() => setActiveDropdown('language')}
+            onMouseLeave={() => setActiveDropdown(null)}
+          >
+            <button className={styles.navLink}>
+              🌐 EN <span className={styles.arrow}>▼</span>
+            </button>
+            {activeDropdown === 'language' && (
+              <div className={styles.dropdown}>
+                <button className={styles.dropdownItem}>
+                  <span className={styles.dropdownIcon}>🇺🇸</span>
+                  <div>
+                    <div className={styles.dropdownTitle}>English</div>
+                  </div>
+                </button>
+                <button className={styles.dropdownItem}>
+                  <span className={styles.dropdownIcon}>🇩🇪</span>
+                  <div>
+                    <div className={styles.dropdownTitle}>Deutsch</div>
+                  </div>
+                </button>
+                <button className={styles.dropdownItem}>
+                  <span className={styles.dropdownIcon}>🇪🇸</span>
+                  <div>
+                    <div className={styles.dropdownTitle}>Español</div>
+                  </div>
+                </button>
+                <button className={styles.dropdownItem}>
+                  <span className={styles.dropdownIcon}>🇫🇷</span>
+                  <div>
+                    <div className={styles.dropdownTitle}>Français</div>
+                  </div>
+                </button>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* CTA Buttons */}
@@ -163,10 +202,10 @@ export default function Navigation() {
         <div className={styles.mobileMenu}>
           <Link href="/features" className={styles.mobileLink}>Features</Link>
           <Link href="/pricing" className={styles.mobileLink}>Pricing</Link>
-          <Link href="/use-cases/content-creators" className={styles.mobileLink}>For Creators</Link>
-          <Link href="/use-cases/marketers" className={styles.mobileLink}>For Marketers</Link>
+          <Link href="/solutions/creators" className={styles.mobileLink}>For Creators</Link>
+          <Link href="/solutions/marketers" className={styles.mobileLink}>For Marketers</Link>
           <Link href="/blog" className={styles.mobileLink}>Blog</Link>
-          <Link href="/help" className={styles.mobileLink}>Help Center</Link>
+          <Link href="/help-center" className={styles.mobileLink}>Help Center</Link>
           <SignedOut>
             <SignInButton mode="modal">
               <button className={styles.mobileCta}>Start Free Trial</button>

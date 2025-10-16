@@ -51,15 +51,53 @@ export async function POST(req: Request) {
   if (eventType === "user.created") {
     const { id, email_addresses, first_name, last_name, image_url } = evt.data;
 
-    await db.user.create({
-      data: {
+    try {
+      // Check if user already exists (idempotency)
+      const existingUser = await db.user.findUnique({
+        where: { clerkId: id },
+      });
+
+      if (existingUser) {
+        console.log(`User already exists: ${id}`);
+        return new Response('User already exists', { status: 200 });
+      }
+
+      // Create user with transaction for atomicity
+      await db.$transaction(async (tx) => {
+        // Create user
+        const user = await tx.user.create({
+          data: {
+            clerkId: id,
+            email: email_addresses[0]?.email_address ?? `${id}@temp.com`,
+            name: `${first_name ?? ""} ${last_name ?? ""}`.trim() || null,
+            imageUrl: image_url,
+            credits: 3, // Free credits on signup
+          },
+        });
+
+        // Create transaction record
+        await tx.transaction.create({
+          data: {
+            userId: user.id,
+            type: 'credit',
+            amount: 3,
+            description: 'Welcome bonus - Free credits',
+            status: 'completed',
+          },
+        });
+
+        console.log(`User created successfully: ${id}`);
+        console.log(`Granted 3 free credits to user: ${user.email}`);
+      });
+    } catch (error) {
+      console.error('Error creating user:', error);
+      console.error('Error details:', {
         clerkId: id,
-        email: email_addresses[0]?.email_address ?? `${id}@temp.com`,
-        name: `${first_name ?? ""} ${last_name ?? ""}`.trim() || null,
-        imageUrl: image_url,
-        credits: 3, // Free credits on signup
-      },
-    });
+        email: email_addresses[0]?.email_address,
+        error: error instanceof Error ? error.message : 'Unknown error',
+      });
+      return new Response('Error creating user', { status: 500 });
+    }
   }
 
   if (eventType === "user.updated") {

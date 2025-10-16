@@ -60,6 +60,7 @@
     "prettier-plugin-tailwindcss": "^0.6.0",
     "prisma": "^6.0.0",
     "tailwindcss": "^4.1.14",
+    "tsx": "^4.20.6",
     "typescript": "^5"
   }
 }

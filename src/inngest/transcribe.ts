@@ -34,8 +34,15 @@ export const transcribeVideo = inngest.createFunction(
 
     // Step 2: Transcribe with WhisperX
     const transcription = await step.run('transcribe-whisperx', async () => {
-      // Call Python WhisperX service
-      // For now, we'll use a placeholder - you'll need to set up the Python service
+      // Temporarily disabled - requires WHISPERX_API_URL env var
+      // TODO: Set up WhisperX service and configure env var
+      return {
+        text: "Transcription placeholder - WhisperX service not configured",
+        segments: [],
+        language: "en"
+      };
+      
+      /* Original code - commented out until WhisperX is configured
       const response = await fetch(`${process.env.WHISPERX_API_URL}/transcribe`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -51,6 +58,7 @@ export const transcribeVideo = inngest.createFunction(
       }
 
       return await response.json();
+      */
     });
 
     // Step 3: Save transcription to database

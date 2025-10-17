@@ -1,7 +1,7 @@
 {
+  "installCommand": "npm install --force",
   "buildCommand": "npm run build",
-  "outputDirectory": ".next",
-  "framework": "nextjs",
-  "installCommand": "npm install --legacy-peer-deps"
+  "outputDirectory": "./.next",
+  "devCommand": "next dev",
+  "framework": "nextjs"
 }
-

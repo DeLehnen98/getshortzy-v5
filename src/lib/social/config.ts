@@ -199,7 +199,7 @@ export function validateVideoForPlatform(
     );
   }
 
-  if (!constraints.formats.includes(format.toLowerCase())) {
+  if (!constraints.formats.includes(format.toLowerCase() as any)) {
     errors.push(
       `Format ${format} is not supported. Supported: ${constraints.formats.join(', ')}`
     );

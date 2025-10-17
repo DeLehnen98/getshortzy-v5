@@ -44,7 +44,8 @@
     "superjson": "^2.2.0",
     "svix": "^1.77.0",
     "tailwind-merge": "^2.6.0",
-    "zod": "^3.24.0"
+    "zod": "^3.24.0",
+    "googleapis": "^144.0.0"
   },
   "devDependencies": {
     "@types/fluent-ffmpeg": "^2.1.26",

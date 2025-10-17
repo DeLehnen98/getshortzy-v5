@@ -82,7 +82,6 @@ export async function POST(req: Request) {
             type: 'credit',
             amount: 3,
             description: 'Welcome bonus - Free credits',
-            status: 'completed',
           },
         });
 
